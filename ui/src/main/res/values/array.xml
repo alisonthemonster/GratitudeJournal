@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ThemeList">
+        <item>Original</item>
+        <item>Sunset</item>
+        <item>Moonlight</item>
+        <item>Midnight</item>
+        <item>Dusk</item>
+        <item>Ivy</item>
+        <item>Wesley</item>
+        <item>Moss</item>
+        <item>Glacier</item>
+        <item>Clean</item>
+        <item>Gelato</item>
+        <item>Waves</item>
+    </string-array>
+
+    <string-array name="BackupCadence">
+        <item>@string/daily</item>
+        <item>@string/weekly</item>
+        <item>@string/every</item>
+    </string-array>
+
+    <string-array name="BackupCadenceValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="DaysOfWeek">
+        <item>@string/saturday</item>
+        <item>@string/sunday</item>
+        <item>@string/monday</item>
+    </string-array>
+
+    <string-array name="DaysOfWeekValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>

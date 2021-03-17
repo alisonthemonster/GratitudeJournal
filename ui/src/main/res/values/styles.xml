@@ -38,4 +38,10 @@
         <item name="fontFamily">@font/value</item>
         <item name="android:fontFamily">@font/value</item>
     </style>
+
+    <style name="TextAppearance.Body" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">@font/larsseit_medium</item>
+        <item name="android:fontFamily">@font/larsseit_medium</item>
+    </style>
 </resources>

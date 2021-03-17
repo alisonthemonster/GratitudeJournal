@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="ThemeOverlay.Presently.AppWidgetContainer" parent="">
+        <item name="appWidgetBackgroundColor">?attr/backgroundColor</item>
+        <item name="appWidgetTextColor">@color/text_color</item>
+    </style>
+</resources>
