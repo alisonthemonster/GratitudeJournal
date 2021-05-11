@@ -107,7 +107,8 @@ jobs:
           command: gcloud config set project gratitude-journal-app
       - run:
           name: Authenticate with Google Cloud
-          command: gcloud auth activate-service-account presently-cicd-service-account@gratitude-journal-app.iam.gserviceaccount.com --key-file ${HOME}/client-secret.json
+          command: |
+            sudo gcloud auth activate-service-account presently-cicd-service-account@gratitude-journal-app.iam.gserviceaccount.com --key-file ${HOME}/client-secret.json
       - run:
           name: Run instrumented test on Firebase Test Lab
           command: gcloud firebase test android run --type instrumentation --app app/build/outputs/apk/debug/app-debug.apk --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --device model=walleye,version=27,locale=en_US,orientation=portrait --environment-variables coverage=true,coverageFile=/sdcard/coverage.ec --directories-to-pull=/sdcard --timeout 20m
