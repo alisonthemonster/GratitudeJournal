@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.reddit.indicatorfastscroll.FastScrollItemIndicator
 import dagger.android.support.DaggerFragment
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.databinding.TimelineFragmentBinding
@@ -33,7 +34,9 @@ import journal.gratitude.com.gratitudejournal.ui.calendar.EntryCalendarListener
 import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.DAY_OF_WEEK
 import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.LINES_PER_ENTRY_IN_TIMELINE
 import journal.gratitude.com.gratitudejournal.util.setStatusBarColorsForBackground
+import journal.gratitude.com.gratitudejournal.util.toFullString
 import journal.gratitude.com.gratitudejournal.util.toLocalDate
+import journal.gratitude.com.gratitudejournal.util.toMonthString
 import kotlinx.android.synthetic.main.timeline_fragment.*
 import org.threeten.bp.LocalDate
 import java.util.*
@@ -136,8 +139,22 @@ class TimelineFragment : DaggerFragment() {
             }
         }
 
-        viewModel.entries.observe(viewLifecycleOwner, Observer {
+        viewModel.entries.observe(viewLifecycleOwner, Observer { timelineItems ->
             binding.viewModel = viewModel
+            if (timelineItems.isNotEmpty()) {
+                fast_scroller.apply {
+                    setupWithRecyclerView(timeline_recycler_view, { position ->
+                        when (val item = timelineItems[position]) {
+                            is Milestone -> null
+                            is Entry -> FastScrollItemIndicator.Text(item.entryDate.toMonthString())
+                        }
+
+                    })
+                }
+                fast_scroll_thumb.apply {
+                    setupWithFastScroller(fast_scroller)
+                }
+            }
         })
 
         viewModel.datesWritten.observe(viewLifecycleOwner, Observer { dates ->
@@ -255,4 +272,6 @@ class TimelineFragment : DaggerFragment() {
     }
 
 }
+
+
 
