@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="prompts">
+            <item>是什么让你嘴角扬起了笑容？</item>
+			<item>这间房间里有什么值得感恩？</item>
+			<item>让你生活拥有小确幸的东西是什么？</item>
+			<item>是谁为你提供了帮助？</item>
+			<item>是谁为你指点了迷津？</item>
+			<item>是谁教会了你某样技能？</item>
+			<item>你爱的人是谁？</item>
+			<item>爱你的人是谁？</item>
+			<item>你感恩的友人是谁？</item>
+			<item>你想感恩的东西本质上是什么？</item>
+			<item>你感恩自己拥有什么天赋或技能？</item>
+			<item>你感恩的一段记忆是什么？</item>
+			<item>今天有人帮助过你吗？</item>
+			<item>是什么让你在这一天感到幸福快乐？</item>
+			<item>你为自己感到骄傲的一件事是什么？</item>
+			<item>你感恩自己的成长吗？</item>
+			<item>你为自己的职业和工作感恩吗？</item>
+			<item>你感恩拥有什么样的自由？</item>
+			<item>是什么让你开怀大笑？</item>
+			<item>你为自己而感恩的一件事是什么？</item>
+			<item>你今天看到的最美丽的东西是什么？</item>
+			<item>你为读到什么书籍感恩？</item>
+			<item>你为听到什么歌曲或音乐感恩？</item>
+			<item>是什么让你的生活更轻松？</item>
+			<item>总能令你振奋的事物是什么？</item>
+			<item>启迪你的人是谁？</item>
+			<item>你感恩拥有什么技术或工具？</item>
+			<item>你感恩得到什么机会？</item>
+			<item>你对自己的身体或健康有何感恩之情？</item>
+			<item>你感恩什么地方？</item>
+			<item>你感恩什么气味？</item>
+			<item>你感恩什么味道？</item>
+			<item>你感恩拥有什么知识？</item>
+			<item>你感恩什么简单的乐趣？</item>
+			<item>你感恩拥有什么爱好？</item>
+			<item>你感恩什么声音？</item>
+			<item>你感恩什么小东西？</item>
+			<item>你感恩学到了什么知识？</item>
+			<item>你对当前所在城市或城镇有何感恩之情？</item>
+			<item>你对家有何感恩之情？</item>
+			<item>你感恩得到何种建议？</item>
+			<item>你对家人有何感恩之情？</item>
+			<item>你对当前的季节有何感恩之情？</item>
+			<item>你感恩什么活动？</item>
+			
+    </string-array>
+</resources>
