@@ -2,7 +2,7 @@ package journal.gratitude.com.gratitudejournal.ui.themes
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -11,7 +11,7 @@ import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.model.Theme
 import kotlinx.android.synthetic.main.item_theme.view.*
 
-class ThemeListAdapter(private val listener: ThemeFragment.OnThemeSelectedListener?) :
+class ThemeListAdapter(var selectedTheme: String = "original", private val listener: ThemeFragment.OnThemeSelectedListener?) :
     ListAdapter<Theme, ThemeListAdapter.ThemeViewHolder>(ThemeDC()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ThemeViewHolder(
@@ -51,6 +51,11 @@ class ThemeListAdapter(private val listener: ThemeFragment.OnThemeSelectedListen
             timeline_line.setBackgroundColor(item.headerColor)
             theme_name.text = item.name
             theme_name.setTextColor(item.iconColor)
+
+            if(item.name.equals(selectedTheme))
+                selectIcon.visibility = VISIBLE
+            else
+                selectIcon.visibility = INVISIBLE
         }
     }
 

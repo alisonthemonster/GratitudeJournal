@@ -43,7 +43,7 @@ class ThemeFragment : Fragment(R.layout.fragment_theme) {
         }
     }
 
-    private val adapter = ThemeListAdapter(listener)
+    private val adapter = ThemeListAdapter(listener = listener)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -332,7 +332,12 @@ class ThemeFragment : Fragment(R.layout.fragment_theme) {
             )
         )
 
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val currentTheme = sharedPref.getString(THEME_PREF, "original") ?: "original"
+        adapter.selectedTheme = currentTheme
+
         adapter.addData(themeList)
+
         // Set the adapter
         themes.layoutManager = GridLayoutManager(context, 3)
         themes.adapter = adapter

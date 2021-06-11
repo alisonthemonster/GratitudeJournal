@@ -74,7 +74,6 @@ class TimelineViewModel @Inject constructor(private val repository: EntryReposit
                                     listWithHintsAndMilestones.add(0, Milestone.create(numEntries))
                                 }
                             }
-
                         }
                         entries.value = listWithHintsAndMilestones
                     }
