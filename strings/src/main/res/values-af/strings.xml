@@ -1,0 +1,111 @@
+<resources>
+    <!--  No need to translate these following strings  -->
+    <string name="app_name" translatable="false">Presently</string>
+    <string name="key_faq" translatable="false">faq</string>
+    <string name="key_share_app" translatable="false">share_app</string>
+    <string name="key_privacy_policy" translatable="false">privacy_policy</string>
+    <string name="key_terms_conditions" translatable="false">terms_conditions</string>
+    <string name="key_open_source" translatable="false">open_source</string>
+    <string name="key_version" translatable="false">version</string>
+
+    <!--  Begin translations from here down  -->
+
+    <string name="random">Willekeurig</string>
+    <string name="what_are_you_thankful_for">Waarvoor is jy dankbaar?</string>
+    <string name="what_were_you_thankful_for">Waarvoor was jy dankbaar?</string>
+    <string name="what_are_you_thankful_for_today">Waarvoor is jy dankbaar vandag?</string>
+    <string name="what_are_you_thankful_for_yesterday">Waarvoor was jy gister dankbaar?</string>
+    <string name="notification_settings">Instellings</string>
+    <string name="privacy_policy">Privaatheidsbeleid</string>
+    <string name="share_presently">Deel Presently</string>
+    <string name="enjoying_presently">Geniet u tans Presently? Deel die app met u vriende en familie</string>
+    <string name="read_privacy">Lees Presently se huidige privaatheidsbeleid</string>
+    <string name="faq">FAQ</string>
+    <string name="read_faq">Lees Presently se gereeld gestelde vrae</string>
+    <string name="contact_us">Kontak Ons</string>
+    <string name="terms_conditions">Terme &amp; Voorwaardes</string>
+    <string name="read_tc">Lees ons terme &amp; voorwaardes</string>
+    <string name="channel_name">Presently Herinnering</string>
+    <string name="channel_description">Daaglikse herinneringe om op te let waarvoor u dankbaar is</string>
+    <string name="today">Vandag</string>
+    <string name="yesterday">Gister</string>
+    <string name="iwas">Ek was dankbaar vir</string>
+    <string name="iam">Ek is dankbaar vir</string>
+    <string name="save">Stoor</string>
+    <string name="back_up_entries_to_csv">Voer inskrywings uit</string>
+    <string name="export_success">Data wat na u toestel uitgevoer</string>
+    <string name="open">Maak oop</string>
+    <string name="import_entries_from_backup">Voer inskrywings in vanaf stoor</string>
+    <string name="ok">Voer in</string>
+    <string name="cancel">Kanselleer</string>
+    <string name="import_data_dialog">Is jy seker jy wil invoer?</string>
+    <string name="import_data_dialog_message">Ingevoerde data kan bestaande inskrywings oorskryf.</string>
+    <string name="days_of_gratitude">dae van dankbaarheid!</string>
+    <string name="days_of">dae van dankbaarheid</string>
+    <string name="rate_presently">Beoordeel Presently</string>
+    <string name="share_your_achievement">Deel u prestasie</string>
+    <string name="congratulations_we_re_so_proud_of_you_and_so_grateful_you_chose_presently_to_record_your_gratitude">
+        Baie geluk! Ons is so trots op u en so dankbaar dat u Presently gekies het om u dankbaarheid op te teken.
+    </string>
+    <string name="search">Soek</string>
+    <string name="presently" translatable="false">Presently</string>
+    <string name="close">Sluit</string>
+    <string name="get_a_new_prompt">Kry inspirasie</string>
+    <string name="share_your_gratitude">Deel u dankbaarheid</string>
+    <string name="no_results">Geen resultate</string>
+    <string name="settings">Instellings</string>
+    <string name="reminder_title">Presently Dankbaarheidsherinnering</string>
+    <string name="share_progress">Deel u dankbaarheidsvordering</string>
+    <string name="change_time">Verander u daaglikse herinneringstyd</string>
+    <string name="time_title">Pas Herinnering Kennisgewings Aan</string>
+    <string name="theme_change">Kies uit meer as 20 verskillende temas en kleurskemas</string>
+    <string name="notifs_off">Kennisgewings vir daaglikse herinneringe is af</string>
+    <string name="notifs_on">Kennisgewings vir daaglikse herinneringe is an</string>
+    <string name="notifs">Kennisgewings vir daaglikse herinneringe</string>
+    <string name="notifs_name">Kennisgewings</string>
+    <string name="appearance">Voorkoms</string>
+    <string name="about">App Inligting</string>
+    <string name="select_a_theme">Kies 'n tema</string>
+    <string name="theme">Tema</string>
+    <string name="open_source">Oopbronlisensies</string>
+    <string name="open_source_info">Lees oopbronbiblioteeklisensies</string>
+    <string name="permission_export">Toestemming is nodig om data uit te voer</string>
+    <string name="error_parsing">Kon nie lêer ontleed nie</string>
+    <string name="file_not_csv">Lêer moet 'n CSV wees</string>
+    <string name="error_creating_csv_file">Kon nie CSV-lêer op toestel skep nie</string>
+    <string name="no_app_found">Geen program gevind om hierdie lêer oop te maak nie</string>
+    <string name="copied">Gekopieer</string>
+    <string name="security">Privaatheid</string>
+    <string name="lock_title">Verkry toegang tot Presently</string>
+    <string name="lock_summary">Presently is gesluit, ontsluit om voort te gaan</string>
+    <string name="lock_setting_summary_on">Presently sluit met die biometriese skandeerder van u toestel.</string>
+    <string name="lock_setting_summary_off">Presently kan sluit met die biometriese skandeerder van u toestel (as dit deur die toestel ondersteun word).</string>
+    <string name="fingerprint_error_lockout_too_many">Te veel pogings tot biometriese verifikasie. Probeer asseblief oor 'n paar minute weer.</string>
+    <string name="continue_to_exit">Gaan voort</string>
+    <string name="are_you_sure">Is jy seker jy wil teruggaan?</string>
+    <string name="unsaved_text">U inskrywing is nie gestoor nie en u veranderinge sal verlore gaan!</string>
+    <string name="version_number">Weergawe Nommer</string>
+    <string name="daily">Daagliks</string>
+    <string name="weekly">Weekliks</string>
+    <string name="every">Op elke verandering</string>
+    <string name="dropbox_summary_off">Meld aan met u Dropbox-rekening om u inskrywings outomaties te rugsteun</string>
+    <string name="dropbox_summary_on">U inskrywings word in Dropbox gerugsteun</string>
+    <string name="dropbox_setting_title">Maak 'n rugsteun van u data met Dropbox</string>
+    <string name="dropbox_backup_frequency">Gereeldheid van Dropbox Rugsteun</string>
+    <string name="one_time_export_summary">Voer u inskrywings as CSV uit na u toestel</string>
+    <string name="one_time_export">Voer inskrywings uit na CSV</string>
+    <string name="import_summary">Kies 'n gerugsteunde CSV-lêer om in te voer</string>
+    <string name="backup_and_restore">Rugsteun &amp; Herstel</string>
+    <string name="day_of_week_off">Datum sluit nie die dag van die week in nie</string>
+    <string name="day_of_week_on">Datum sluit die dag van die week in</string>
+    <string name="day_of_week_title">Datumstyl</string>
+    <string name="max_lines_title">Tydlyn Inskrywing Lengte</string>
+    <string name="max_lines_summary">Aantal lyne in die tydlyn. Die volledige teks is sigbaar as u op die inskrywing klik.</string>
+    <string name="saturday">Saterdag</string>
+    <string name="sunday">Sondag</string>
+    <string name="monday">Maandag</string>
+    <string name="day_of_week_summary">Stel die eerste dag van die week in die kalenderaansig</string>
+    <string name="first_day_of_week_title">Eerste dag van die week</string>
+    <string name="share_milestone">Ek het vir %1$d dae dankbaarheids inskrywings gemaak! Sluit by my aan deur die Presently App. #PresentlyApp</string>
+    <string name="share_app_text">Oefen dankbaarheid met hierdie eenvoudige, altyd gratis en private dankbaarheidsjoernaal app</string>
+</resources>

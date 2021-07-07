@@ -302,6 +302,26 @@ Presently şunları sağlar:
 
 Presently %100 ücretsiz ve reklamsızdır. Tüm yazıların cihazında ve kontrolünde kalır.
 
+## Afrikaans
+Presently: 'n Dankbaarheidsdagboek
+
+Vier jou daaglikse lewe met Presently, 'n gratis en privaat digitale dankbaarheidsdagboek
+
+Oefen en versterk jou vermoë om dankbaarheid te ervaar met hierdie eenvoudige, altyd gratis en private dankbaarheidsdagboek app.
+
+Presently laat jou toe om:
+⁕ Daaglikse inskrywings te maak rondom enige iets waarvoor jy dankbaar is
+⁕ Na te dink aan oomblikke waar jy dankbaar gevoel het
+⁕ Motivering te vind deur aanhalings en herinneringe
+⁕ Skep van daaglikse herinnerings om jou dankbaarheid oefening vol te hou
+⁕ Beveilig jou dagboek inskrywings via fingerafdruk of met jou gesig beeld beskerming
+⁕ Outomatiese Stoor van jou inskrywings met Dropbox
+⁕ Soek vir vorige inskrywings met sleutelwoorde en datums
+⁕ Deel 'n inskrywing met jou familie en friende
+⁕ Laai af/lees in jou inskrywings
+⁕ Maak gebruik van jou gunsteling kleur skema met vele om van te kies
+
+Presently is 100% verniet en advertensie vry. Al jou inskrywings leef slegs op jou toestel/foon en binne jou beheer.
 
 ## Simplified Chinese
 Presently：感恩日记
