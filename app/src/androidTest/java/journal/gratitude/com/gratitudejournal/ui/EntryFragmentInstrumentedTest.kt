@@ -3,7 +3,6 @@ package journal.gratitude.com.gratitudejournal.ui
 import android.app.Activity
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
@@ -31,6 +30,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
+import journal.gratitude.com.gratitudejournal.testUtils.launchFragmentInHiltContainer
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -58,7 +58,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, false)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -78,7 +78,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, false)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -97,7 +97,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, false)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -116,7 +116,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -133,7 +133,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -153,7 +153,7 @@ class EntryFragmentInstrumentedTest {
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
         args.putInt(EntryFragment.ENTRY_NUM_ENTRIES, 4)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -176,7 +176,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -204,14 +204,14 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
 
-        val scenario = launchFragmentInContainer<EntryFragment>(
+        val scenario = launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
 
         var activity: Activity? = null
-        scenario.onFragment { fragment ->
-            activity = fragment.activity
+        scenario?.onActivity { act ->
+            activity = act
         }
 
         onView(withId(R.id.inspiration)).perform(longClick())
@@ -229,7 +229,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )
@@ -275,7 +275,7 @@ class EntryFragmentInstrumentedTest {
         args.putString(EntryFragment.ENTRY_DATE, date.toString())
         args.putBoolean(EntryFragment.ENTRY_IS_NEW, true)
 
-        launchFragmentInContainer<EntryFragment>(
+        launchFragmentInHiltContainer<EntryFragment>(
             themeResId = R.style.Base_AppTheme,
             fragmentArgs = args
         )

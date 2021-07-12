@@ -1,6 +1,7 @@
 include ':ui'
 include ':app'
 include ':strings'
+include ':settings'
 include ':coverage_example'
 include ':sharing'
 include ':testing'

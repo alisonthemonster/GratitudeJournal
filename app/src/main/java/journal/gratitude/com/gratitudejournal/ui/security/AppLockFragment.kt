@@ -9,21 +9,24 @@ import androidx.biometric.BiometricConstants
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.presently.settings.PresentlySettings
+import dagger.hilt.android.AndroidEntryPoint
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.model.BIOMETRICS_CANCELLED
 import journal.gratitude.com.gratitudejournal.model.BIOMETRICS_LOCKOUT
 import journal.gratitude.com.gratitudejournal.model.BIOMETRICS_USER_CANCELLED
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.FINGERPRINT
 import journal.gratitude.com.gratitudejournal.ui.timeline.TimelineFragment
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppLockFragment : Fragment() {
 
     private var fingerprintLock: Boolean = false
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    @Inject lateinit var settings: PresentlySettings
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -34,8 +37,7 @@ class AppLockFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        fingerprintLock = sharedPref.getBoolean(FINGERPRINT, false)
+        fingerprintLock = settings.isBiometricsEnabled()
         if (!fingerprintLock)
             moveToTimeline()
 

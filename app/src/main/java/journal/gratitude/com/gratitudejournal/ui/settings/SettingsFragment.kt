@@ -31,6 +31,9 @@ import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListene
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.presently.settings.BackupCadence
+import com.presently.settings.PresentlySettings
+import com.presently.settings.model.*
 import journal.gratitude.com.gratitudejournal.BuildConfig
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.model.*
@@ -62,6 +65,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener, DialogPreference.TargetFragment {
 
     @Inject lateinit var repository: EntryRepository
+    @Inject lateinit var settings: PresentlySettings
 
     private lateinit var splitInstallManager: SplitInstallManager
 
@@ -118,7 +122,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         // Handle icon issues for android versions < 23
         if(Build.VERSION.SDK_INT <= 23) {
             context?.getColor(R.color.text_color)?.let { share?.icon?.setTint(it) }
-            val lang = findPreference<Preference>("app_language")
+            val lang = findPreference<Preference>(APP_LANGUAGE)
             context?.getColor(R.color.text_color)?.let { lang?.icon?.setTint(it) }
         }
 
@@ -156,28 +160,23 @@ class SettingsFragment : PreferenceFragmentCompat(),
         val dropbox = findPreference<Preference>(BACKUP_TOKEN)
         val cadencePref = (findPreference<Preference>(BACKUP_CADENCE) as ListPreference)
 
-
         dropbox?.setOnPreferenceClickListener {
             val wantsToLogin = preferenceScreen.sharedPreferences.getBoolean(BACKUP_TOKEN, false)
             if (!wantsToLogin) {
                 firebaseAnalytics.logEvent(DROPBOX_DEAUTH, null)
                 firebaseAnalytics.setUserProperty(DROPBOX_USER, "false")
                 lifecycleScope.launch {
-                    DropboxUploader.deauthorizeDropboxAccess(requireContext())
+                    DropboxUploader.deauthorizeDropboxAccess(requireContext(), settings)
                 }
             } else {
                 firebaseAnalytics.logEvent(DROPBOX_AUTH_ATTEMPT, null)
-                DropboxUploader.authorizeDropboxAccess(requireContext())
+                DropboxUploader.authorizeDropboxAccess(requireContext(), settings)
             }
             true
         }
 
-        val cadence = preferenceScreen.sharedPreferences.getString(BACKUP_CADENCE, "0")
-        val index = when (cadence) {
-            "0" -> 0
-            "1" -> 1
-            else -> 2
-        }
+        val cadence = settings.getAutomaticBackupCadence()
+        val index = cadence.index
         cadencePref.setValueIndex(index)
         val oneTimeExport = findPreference<Preference>(ONE_TIME_EXPORT_PREF)
         oneTimeExport?.setOnPreferenceClickListener {
@@ -218,40 +217,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 firebaseAnalytics.logEvent(DROPBOX_AUTH_SUCCESS, null)
                 firebaseAnalytics.setUserProperty(DROPBOX_USER, "true")
                 prefs.edit().putString("access-token", token).apply()
-                createDropboxUploaderWorker("0")
+                createDropboxUploaderWorker(BackupCadence.DAILY)
             }
         }
-    }
-
-    private fun createDropboxUploaderWorker(cadence: String) {
-        WorkManager.getInstance(requireContext()).cancelAllWorkByTag(PRESENTLY_BACKUP)
-
-        when (cadence) {
-            "0" -> {
-                //every day
-                val uploadWorkRequest =
-                        PeriodicWorkRequestBuilder<UploadToCloudWorker>(1, TimeUnit.DAYS)
-                                .addTag(PRESENTLY_BACKUP)
-                                .build()
-                WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest)
-            }
-            "1" -> {
-                //every week
-                val uploadWorkRequest =
-                        PeriodicWorkRequestBuilder<UploadToCloudWorker>(7, TimeUnit.DAYS)
-                                .addTag(PRESENTLY_BACKUP)
-                                .build()
-                WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest)
-            }
-            "2" -> {
-                //every change so do an upload now
-                val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadToCloudWorker>()
-                        .addTag(PRESENTLY_BACKUP)
-                        .build()
-                WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest)
-            }
-        }
-
     }
 
     override fun onPause() {
@@ -261,19 +229,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            THEME_PREF -> {
-                val theme = sharedPreferences.getString(THEME_PREF, "original")
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, theme)
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, theme)
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "theme")
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
-                activity?.recreate()
-            }
             NOTIFS -> {
-                val notifsTurnedOn = sharedPreferences.getBoolean(key, true)
+                val notifsTurnedOn = settings.hasEnabledNotifications()
                 if (notifsTurnedOn) {
-                    NotificationScheduler().configureNotifications(requireContext())
+                    NotificationScheduler().configureNotifications(requireContext(), settings)
                     firebaseAnalytics.setUserProperty(HAS_NOTIFICATIONS_TURNED_ON, "true")
                 } else {
                     NotificationScheduler().disableNotifications(requireContext())
@@ -282,7 +241,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 }
             }
             FINGERPRINT -> {
-                val biometricsEnabled = sharedPreferences.getBoolean(key, false)
+                val biometricsEnabled = settings.isBiometricsEnabled()
                 if (biometricsEnabled) {
                     firebaseAnalytics.logEvent(BIOMETRICS_SELECT, null)
                     firebaseAnalytics.setUserProperty(BIOMETRICS_ENABLED, "true")
@@ -292,48 +251,76 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 }
             }
             BACKUP_CADENCE -> {
-                val cadence =
-                        preferenceScreen.sharedPreferences.getString(BACKUP_CADENCE, "0") ?: "0"
+                //todo test cadence works properly with dropbox
+                val cadence = settings.getAutomaticBackupCadence()
                 fireAnalyticsEventForCadence(cadence, firebaseAnalytics)
                 createDropboxUploaderWorker(cadence)
             }
             APP_LANGUAGE -> {
-                val language = sharedPreferences.getString(APP_LANGUAGE, "unknown")
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, language)
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, language)
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "language")
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
-
-                val crashlytics = FirebaseCrashlytics.getInstance()
-
-                val request = SplitInstallRequest.newBuilder()
-                        .addLanguage(Locale.forLanguageTag(language))
-                        .build()
-                splitInstallManager.registerListener(listener)
-                splitInstallManager.startInstall(request)
-                        .addOnSuccessListener {
-                            requestId = it
-                            Toast.makeText(context, R.string.loading_lang, Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener { exception ->
-                            crashlytics.recordException(exception)
-                            Toast.makeText(context, "Error loading language", Toast.LENGTH_SHORT).show()
-                        }
+                val language = settings.getLocale()
+                updateLanguage(language)
             }
         }
     }
 
+    private fun updateLanguage(language: String) {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, language)
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, language)
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "language")
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+
+        val crashlytics = FirebaseCrashlytics.getInstance()
+
+        val request = SplitInstallRequest.newBuilder()
+            .addLanguage(Locale.forLanguageTag(language))
+            .build()
+        splitInstallManager.registerListener(listener)
+        splitInstallManager.startInstall(request)
+            .addOnSuccessListener {
+                requestId = it
+                Toast.makeText(context, R.string.loading_lang, Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { exception ->
+                crashlytics.recordException(exception)
+                Toast.makeText(context, "Error loading language", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun createDropboxUploaderWorker(cadence: BackupCadence) {
+        WorkManager.getInstance(requireContext()).cancelAllWorkByTag(PRESENTLY_BACKUP)
+
+        when (cadence) {
+            BackupCadence.DAILY -> {
+                val uploadWorkRequest =
+                    PeriodicWorkRequestBuilder<UploadToCloudWorker>(1, TimeUnit.DAYS)
+                        .addTag(PRESENTLY_BACKUP)
+                        .build()
+                WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest)
+            }
+            BackupCadence.WEEKLY -> {
+                val uploadWorkRequest =
+                    PeriodicWorkRequestBuilder<UploadToCloudWorker>(7, TimeUnit.DAYS)
+                        .addTag(PRESENTLY_BACKUP)
+                        .build()
+                WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest)
+            }
+            BackupCadence.EVERY_CHANGE -> {
+                //every change so do an upload now
+                val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadToCloudWorker>()
+                    .addTag(PRESENTLY_BACKUP)
+                    .build()
+                WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest)
+            }
+        }
+
+    }
+
     private fun fireAnalyticsEventForCadence(
-            cadence: String,
+            cadence: BackupCadence,
             firebaseAnalytics: FirebaseAnalytics
     ) {
-        val cadenceString = when (cadence) {
-            "0" -> "Daily"
-            "1" -> "Weekly"
-            "2" -> "Every change"
-            else -> "Unknown"
-        }
+        val cadenceString = cadence.string
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, cadenceString)
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, cadenceString)
@@ -609,22 +596,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     companion object {
-        const val BACKUP_CATEGORY = "backups_category"
         const val BACKUP_TOKEN = "dropbox_pref"
-        const val BACKUP_CADENCE = "dropbox_cadence"
-        const val FINGERPRINT = "fingerprint_lock"
-        const val NOTIFS = "notif_parent"
-        const val NOTIF_PREF_TIME = "pref_time"
-        const val THEME_PREF = "current_theme"
-        const val VERSION_PREF = "version"
-        const val ONE_TIME_EXPORT_PREF = "one_time_export"
-        const val IMPORT_PREF = "import_entries"
-        const val DAY_OF_WEEK = "day_of_week"
-        const val LINES_PER_ENTRY_IN_TIMELINE = "lines_per_entry_in_timeline"
-        const val FIRST_DAY_OF_WEEK = "first_day_of_week"
-        const val APP_LANGUAGE = "app_language"
-        const val NO_LANG_PREF = "no_language_selected"
-
         const val SETTINGS_TO_THEME = "SETTINGS_TO_THEME"
     }
 }

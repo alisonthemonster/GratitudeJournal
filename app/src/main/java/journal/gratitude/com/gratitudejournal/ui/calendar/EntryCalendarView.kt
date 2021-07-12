@@ -6,11 +6,11 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import androidx.preference.PreferenceManager
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
+import com.presently.settings.PresentlySettings
+import dagger.hilt.android.AndroidEntryPoint
 import journal.gratitude.com.gratitudejournal.R
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.FIRST_DAY_OF_WEEK
 import journal.gratitude.com.gratitudejournal.util.getYearString
 import journal.gratitude.com.gratitudejournal.util.toDate
 import journal.gratitude.com.gratitudejournal.util.toLocalDate
@@ -18,9 +18,12 @@ import journal.gratitude.com.gratitudejournal.util.toMonthString
 import kotlinx.android.synthetic.main.calendar_fragment.view.*
 import org.threeten.bp.LocalDate
 import java.util.*
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class EntryCalendarView : FrameLayout {
+
+    @Inject lateinit var settings: PresentlySettings
 
     private var monthString = "${Date().toMonthString()} ${Date().getYearString()}"
     private var entryCalendarListener: EntryCalendarListener? = null
@@ -44,12 +47,7 @@ class EntryCalendarView : FrameLayout {
 
         val locale = Locale.getDefault()
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val firstDayOfWeek = when (prefs.getString(FIRST_DAY_OF_WEEK, "monday")) {
-            "0" -> Calendar.SATURDAY
-            "1" -> Calendar.SUNDAY
-            else -> Calendar.MONDAY
-        }
+        val firstDayOfWeek = settings.getFirstDayOfWeek()
 
         calendar = compactcalendar_view
         calendar.setFirstDayOfWeek(firstDayOfWeek)

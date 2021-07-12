@@ -8,21 +8,20 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.preference.PreferenceManager
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.presently.settings.PresentlySettings
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import journal.gratitude.com.gratitudejournal.di.SettingsEntryPoint
 import journal.gratitude.com.gratitudejournal.model.CAME_FROM_NOTIFICATION
 import journal.gratitude.com.gratitudejournal.ui.security.AppLockFragment
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.FINGERPRINT
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.THEME_PREF
-import journal.gratitude.com.gratitudejournal.ui.timeline.TimelineFragment
 import journal.gratitude.com.gratitudejournal.util.LocaleHelper
 import journal.gratitude.com.gratitudejournal.util.reminders.NotificationScheduler
 import journal.gratitude.com.gratitudejournal.util.reminders.ReminderReceiver.Companion.fromNotification
-import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ContainerActivity : AppCompatActivity() {
@@ -31,17 +30,19 @@ class ContainerActivity : AppCompatActivity() {
         const val CHANNEL_ID = "Presently Gratitude Reminder"
     }
 
+    @Inject lateinit var settings: PresentlySettings
+
     override fun attachBaseContext(newBase: Context) {
-        val context: Context = LocaleHelper.onAppAttached(newBase)
+        val settings = EntryPointAccessors.fromApplication(newBase, SettingsEntryPoint::class.java).settings
+        val context: Context = LocaleHelper.onAppAttached(newBase, settings)
         super.attachBaseContext(context)
         SplitCompat.installActivity(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        val currentTheme = sharedPref.getString(THEME_PREF, "original") ?: "original"
-        setAppTheme(currentTheme)
         super.onCreate(savedInstanceState)
+        val currentTheme = settings.getCurrentTheme()
+        setAppTheme(currentTheme)
         setContentView(R.layout.container_activity)
 
         createNotificationChannel()
@@ -54,7 +55,7 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
 
-        NotificationScheduler().configureNotifications(this)
+        NotificationScheduler().configureNotifications(this, settings)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
@@ -79,15 +80,9 @@ class ContainerActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        val fingerprintLock = sharedPref.getBoolean(FINGERPRINT, false)
-        if (fingerprintLock) {
-            val lastDestroyTime =
-                sharedPref.getLong("last_destroy_time", -1L) //check this default makes sense
-            val currentTime = Date(System.currentTimeMillis()).time
-            val diff = currentTime - lastDestroyTime
-            if (diff > 300_000L) {
-                //if more than 5 minutes (300000ms) have passed since last destroy, lock out user
+        val isBiometricsEnabled = settings.isBiometricsEnabled()
+        if (isBiometricsEnabled) {
+            if (settings.shouldLockApp()) {
                 val fragment = AppLockFragment()
                 supportFragmentManager
                     .beginTransaction()
@@ -99,12 +94,8 @@ class ContainerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
-        val fingerprintLock = sharedPref.getBoolean(FINGERPRINT, false)
-        if (fingerprintLock) {
-            val date = Date(System.currentTimeMillis())
-            sharedPref.edit().putLong("last_destroy_time", date.time).apply()
+        if (settings.isBiometricsEnabled()) {
+            settings.setOnPauseTime()
         }
     }
 

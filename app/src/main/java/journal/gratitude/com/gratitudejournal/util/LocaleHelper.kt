@@ -3,18 +3,17 @@ package journal.gratitude.com.gratitudejournal.util
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
-import androidx.preference.PreferenceManager
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.APP_LANGUAGE
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.NO_LANG_PREF
+import com.presently.settings.PresentlySettings
+import com.presently.settings.model.NO_LANG_PREF
 import java.util.*
 
 object LocaleHelper {
-    fun onAppAttached(context: Context): Context {
-        return updateLanguage(context)
+    fun onAppAttached(context: Context, settings: PresentlySettings): Context {
+        return updateLanguage(context, settings)
     }
 
-    private fun updateLanguage(context: Context): Context {
-        val language = getLastLanguageSaved(context)
+    private fun updateLanguage(context: Context, settings: PresentlySettings): Context {
+        val language = getLastLanguageSaved(settings)
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             updateConfiguration(language, context)
         } else {
@@ -53,9 +52,8 @@ object LocaleHelper {
      * their device is using. If we do not support their language then the app
      * falls back to English.
      * */
-    private fun getLastLanguageSaved(context: Context): String {
-        val languagePref = PreferenceManager.getDefaultSharedPreferences(context)
-            .getString(APP_LANGUAGE, NO_LANG_PREF) ?: NO_LANG_PREF
+    private fun getLastLanguageSaved(settings: PresentlySettings): String {
+        val languagePref = settings.getLocale()
         return if (languagePref == NO_LANG_PREF) {
             getDeviceLanguage()
         } else {

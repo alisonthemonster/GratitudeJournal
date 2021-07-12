@@ -9,27 +9,28 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Param.*
+import com.presently.settings.PresentlySettings
 import com.presently.ui.setStatusBarColorsForBackground
+import dagger.hilt.android.AndroidEntryPoint
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.model.THEME
 import journal.gratitude.com.gratitudejournal.model.Theme
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.THEME_PREF
 import kotlinx.android.synthetic.main.fragment_theme.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ThemeFragment : Fragment(R.layout.fragment_theme) {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    @Inject lateinit var settings: PresentlySettings
 
     private var listener = object : OnThemeSelectedListener {
         override fun onThemeSelected(theme: String) {
-            PreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(THEME_PREF, theme)
-                .apply()
+            settings.setTheme(theme)
+
             val bundle = bundleOf(
                 ITEM_NAME to theme,
                 ITEM_ID to theme,

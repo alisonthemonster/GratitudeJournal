@@ -19,16 +19,14 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.preference.PreferenceManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.presently.settings.PresentlySettings
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.databinding.TimelineFragmentBinding
 import journal.gratitude.com.gratitudejournal.model.*
 import journal.gratitude.com.gratitudejournal.ui.calendar.CalendarAnimation
 import journal.gratitude.com.gratitudejournal.ui.calendar.EntryCalendarListener
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.DAY_OF_WEEK
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment.Companion.LINES_PER_ENTRY_IN_TIMELINE
 import com.presently.ui.setStatusBarColorsForBackground
 import dagger.hilt.android.AndroidEntryPoint
 import journal.gratitude.com.gratitudejournal.ui.entry.EntryFragment
@@ -38,11 +36,13 @@ import journal.gratitude.com.gratitudejournal.util.toLocalDate
 import kotlinx.android.synthetic.main.timeline_fragment.*
 import org.threeten.bp.LocalDate
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TimelineFragment : Fragment() {
 
     private val viewModel: TimelineViewModel by viewModels()
+    @Inject lateinit var settings: PresentlySettings
 
     private lateinit var adapter: TimelineAdapter
     private lateinit var binding: TimelineFragmentBinding
@@ -87,9 +87,9 @@ class TimelineFragment : Fragment() {
 
         timeline_recycler_view.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(context)
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val showDayOfWeek = sharedPrefs?.getBoolean(DAY_OF_WEEK, false) ?: false
-        val linesPerEntry = sharedPrefs?.getInt(LINES_PER_ENTRY_IN_TIMELINE, 10) ?: 10
+
+        val showDayOfWeek = settings.shouldShowDayOfWeekInTimeline()
+        val linesPerEntry = settings.getLinesPerEntryInTimeline()
         adapter = TimelineAdapter(
             requireActivity(),
             showDayOfWeek,

@@ -1,13 +1,13 @@
 package journal.gratitude.com.gratitudejournal.util.backups.dropbox
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
+import com.presently.settings.PresentlySettings
 import journal.gratitude.com.gratitudejournal.BuildConfig
 import journal.gratitude.com.gratitudejournal.model.CloudUploadResult
 import journal.gratitude.com.gratitudejournal.model.UploadError
@@ -19,14 +19,12 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 
-class DropboxUploader(val context: Context):
+class DropboxUploader(val context: Context, val settings: PresentlySettings):
     CloudProvider {
 
     override suspend fun uploadToCloud(file: File): CloudUploadResult {
         return withContext(Dispatchers.IO) {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val accessToken = sharedPreferences.getString("access-token", null)
-
+            val accessToken = settings.getAccessToken()
             val requestConfig = DbxRequestConfig.newBuilder("PresentlyAndroid")
                 .build()
 
@@ -49,25 +47,20 @@ class DropboxUploader(val context: Context):
 
     companion object {
 
-        fun authorizeDropboxAccess(context: Context) {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            sharedPreferences.edit().putString("access-token", "attempted").apply()
-
+        fun authorizeDropboxAccess(context: Context, settings: PresentlySettings) {
+            settings.setAccessToken("attempted")
             Auth.startOAuth2Authentication(context, BuildConfig.DROPBOX_APP_KEY)
         }
 
-        suspend fun deauthorizeDropboxAccess(context: Context) {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
+        suspend fun deauthorizeDropboxAccess(context: Context, settings: PresentlySettings) {
             withContext(Dispatchers.IO) {
-                val accessToken = sharedPreferences.getString("access-token", null)
-
+                val accessToken = settings.getAccessToken()
                 val requestConfig = DbxRequestConfig.newBuilder("PresentlyAndroid")
                     .build()
-
                 val client = DbxClientV2(requestConfig, accessToken)
                 client.auth().tokenRevoke()
-                sharedPreferences.edit().remove("access-token").apply()
+
+                settings.clearAccessToken()
                 WorkManager.getInstance(context).cancelAllWorkByTag(PRESENTLY_BACKUP)
             }
         }

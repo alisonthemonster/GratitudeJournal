@@ -17,8 +17,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.airbnb.mvrx.MavericksView
@@ -26,33 +24,36 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.jakewharton.rxbinding2.widget.RxTextView
+import com.presently.settings.BackupCadence
+import com.presently.settings.PresentlySettings
 import com.presently.sharing.view.SharingFragment
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.model.*
 import journal.gratitude.com.gratitudejournal.ui.dialog.CelebrateDialogFragment
-import journal.gratitude.com.gratitudejournal.ui.settings.SettingsFragment
 import journal.gratitude.com.gratitudejournal.util.backups.UploadToCloudWorker
 import journal.gratitude.com.gratitudejournal.util.backups.dropbox.DropboxUploader
 import com.presently.ui.setStatusBarColorsForBackground
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import journal.gratitude.com.gratitudejournal.util.toFullString
 import kotlinx.android.synthetic.main.entry_fragment.*
 import org.threeten.bp.LocalDate
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EntryFragment : Fragment(R.layout.entry_fragment), MavericksView {
 
     private val viewModel: EntryViewModel by fragmentViewModel()
+    @Inject lateinit var settings: PresentlySettings
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-    private lateinit var sharedPrefs: SharedPreferences
 
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPrefs =  PreferenceManager.getDefaultSharedPreferences(activity)
 
         if (savedInstanceState == null) {
             val passedInDate = arguments?.getString(ENTRY_DATE)
@@ -102,7 +103,7 @@ class EntryFragment : Fragment(R.layout.entry_fragment), MavericksView {
             viewModel.saveEntry()
         }
 
-        val showQuote = sharedPrefs.getBoolean("show_quote", true)
+        val showQuote = settings.shouldShowQuote()
         if (!showQuote) {
             inspiration.visibility = View.GONE
         }
@@ -222,9 +223,9 @@ class EntryFragment : Fragment(R.layout.entry_fragment), MavericksView {
             activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         imm?.hideSoftInputFromWindow(entry_text.windowToken, 0)
 
-        val accessToken = sharedPrefs.getString("access-token", null)
-        val cadence = sharedPrefs.getString(SettingsFragment.BACKUP_CADENCE, "0") ?: "0"
-        if (accessToken != null && cadence == "2") {
+        val accessToken = settings.getAccessToken()
+        val cadence = settings.getAutomaticBackupCadence()
+        if (accessToken != null && cadence == BackupCadence.EVERY_CHANGE) {
             val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadToCloudWorker>()
                 .addTag(DropboxUploader.PRESENTLY_BACKUP)
                 .build()

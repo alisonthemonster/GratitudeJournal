@@ -1,6 +1,7 @@
 package journal.gratitude.com.gratitudejournal.di
 
 import android.content.Context
+import com.presently.settings.PresentlySettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +18,8 @@ import javax.inject.Singleton
 object CloudUploadModule {
 
     @Provides
-    fun provideCloudUpload(@ApplicationContext context: Context): CloudProvider {
-        return DropboxUploader(context)
+    fun provideCloudUpload(@ApplicationContext context: Context, settings: PresentlySettings): CloudProvider {
+        return DropboxUploader(context, settings)
     }
 
 }

@@ -26,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import journal.gratitude.com.gratitudejournal.R
 import journal.gratitude.com.gratitudejournal.databinding.SearchFragmentBinding
 import journal.gratitude.com.gratitudejournal.model.CLICKED_SEARCH_ITEM
-import com.presently.ui.setStatusBarColorsForBackground
 import journal.gratitude.com.gratitudejournal.ui.entry.EntryFragment
 import journal.gratitude.com.gratitudejournal.ui.timeline.TimelineFragment
 import journal.gratitude.com.gratitudejournal.util.textChanges
@@ -34,7 +33,6 @@ import kotlinx.android.synthetic.main.search_fragment.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
